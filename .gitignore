@@ -1,0 +1,7 @@
+Makefile
+obj/
+e01
+
+*.bin
+
+dist/

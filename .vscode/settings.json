@@ -1,0 +1,15 @@
+{
+	"cSpell.words": [
+		"CENTERED",
+		"Depthf",
+		"glmc",
+		"Lsizei",
+		"OPENGL",
+		"Parens",
+		"Programiv",
+		"vaos",
+		"vsync",
+		"Wolfaardt"
+	],
+	"files.associations": { "*.h": "c" }
+}
