@@ -4,8 +4,14 @@
 
 #include "config.h"
 #include "file.h"
+#include "log.h"
+#include "mem.h"
 #include "renderer.h"
 #include "window.h"
+
+#if 1
+#include <GLES2/gl2ext.h>
+#endif // 1
 
 const GLsizei stride = (3 + 2) * sizeof(float);
 
@@ -18,6 +24,7 @@ mat4 projectionView = GLM_MAT4_IDENTITY_INIT;
 
 GLuint vaos[2], buffers[4];
 int indexCount = 0;
+GLuint texture;
 
 bool resized = false;
 float angle = 0.0f;
@@ -135,10 +142,49 @@ bool e01Init() {
 	glUniform1i(2, 0);
 	glUniform1i(3, 1);
 
+	glGenTextures(1, &texture);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
+	f = fileInit("texture.bin", fm_read);
+	fileSeek(f, f->size - sizeof(unsigned char));
+	unsigned char levels;
+	fileRead(f, "texture levels", &levels, sizeof(unsigned char));
+	debug("Levels: %u\n", levels);
+	fileSeek(f, 0);
+	for(int i = 0; i < levels; i++) {
+		unsigned short width, height;
+		fileRead(f, "texture level width", &width, sizeof(unsigned short));
+		fileRead(f, "texture level height", &height, sizeof(unsigned short));
+		debug("Texture level %i size: %ux%u\n", i, width, height);
+
+		int size;
+		fileRead(f, "texture level size", &size, sizeof(int));
+
+		char *data = memAlloc("texture data", size);
+		fileRead(f, "texture data", data, size);
+		glCompressedTexImage2D(GL_TEXTURE_2D, i, GL_COMPRESSED_RGB8_ETC2, width,
+							   height, 0, size, data);
+		free(data);
+	}
+	fileFree(f);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+					GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GLint anisotropy;
+	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	glUseProgram(base->program);
+	glUniform1i(2, 1);
+
 	return true;
 }
 
 void e01Free() {
+	glDeleteTextures(1, &texture);
 	glDeleteBuffers(4, buffers);
 	glDeleteVertexArrays(2, vaos);
 
@@ -158,9 +204,7 @@ void e01Resize() {
 void e01Run() {
 	rendererUse(base);
 
-	glDisable(GL_CULL_FACE);
-
-	const float speed = 45.0f * windowDeltaTime();
+	const float speed = 25.0f * windowDeltaTime();
 	angle += speed;
 	if(angle > 360.0f) angle -= 360.0f;
 
@@ -169,17 +213,19 @@ void e01Run() {
 	glUniformMatrix4fv(0, 1, GL_FALSE, matrix[0]);
 
 	glBindVertexArray(vaos[0]);
+	glBindTexture(GL_TEXTURE_2D, texture);
 
 	rendererClear();
+
+	glCullFace(GL_FRONT);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
-	// glDrawArrays(GL_TRIANGLES, 0, modelSize / stride); //
+	glCullFace(GL_BACK);
+	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, NULL);
 
 	rendererComplete(base);
 
 	rendererUse(basic);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	glEnable(GL_CULL_FACE);
 
 	glBindVertexArray(vaos[1]);
 

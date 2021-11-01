@@ -17,6 +17,8 @@ typedef enum { //
 file *fileInit(const char *filename, fileMode mode);
 void fileFree(file *f);
 
+void fileSeek(file *f, int offset);
+
 bool fileRead(file *f, const char *thing, void *data, int size);
 bool fileWrite(file *f, const char *thing, const void *data, int size);
 
