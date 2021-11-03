@@ -2,6 +2,7 @@
 
 #include <malloc.h>
 
+#include "config.h"
 #include "file.h"
 #include "log.h"
 #include "mem.h"
@@ -10,15 +11,28 @@
 #include <GLES2/gl2ext.h>
 #endif // 1
 
-GLint textureAnisotropy = 0;
+GLint textureMaxAnisotropy = 0;
 
 void textureSystemInit() {
-	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &textureAnisotropy);
-
-	if(!textureAnisotropy)
+	glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &textureMaxAnisotropy);
+	if(!textureMaxAnisotropy) {
 		warn("Anisotropic texture filtering not supported.\n", 0);
-	// else
-	// 	debug("Max texture anisotropy: %i\n", textureAnisotropy);
+		return;
+	}
+
+	unsigned char anisotropy = configGetAnisotropy();
+
+	if(anisotropy > textureMaxAnisotropy) {
+		warn(
+			"Config anisotropy (%u) higher than maximum supported anisotropy (%i), updating config...\n",
+			anisotropy, textureMaxAnisotropy);
+
+		anisotropy = (unsigned char)textureMaxAnisotropy;
+		configSetAnisotropy(anisotropy);
+		configSave();
+	}
+
+	// debug("Texture anisotropy: %u/%i\n", anisotropy, textureMaxAnisotropy);
 }
 
 bool textureInit(GLuint *texture, const char *filename) {
@@ -87,9 +101,9 @@ bool textureInit(GLuint *texture, const char *filename) {
 					GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if(textureAnisotropy)
+	if(textureMaxAnisotropy)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT,
-						textureAnisotropy);
+						(GLint)configGetAnisotropy());
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

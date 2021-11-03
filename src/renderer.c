@@ -80,6 +80,11 @@ renderer *rendererInit(const char *name,
 
 	if(!rendererLoadProgram(ren)) rendererInitFail();
 
+	if(type == rt_direct) {
+		rendererResize(ren, 0, 0);
+		return ren;
+	}
+
 	if(type == rt_normal && numOutputs < 2)
 		numOutputs = 2;
 	else if(numOutputs < 1)
@@ -128,6 +133,13 @@ void rendererFree(renderer *ren) {
 }
 
 void rendererResize(renderer *ren, int width, int height) {
+	if(ren->type == rt_direct) {
+		ren->width = windowWidth();
+		ren->height = windowHeight();
+
+		return;
+	}
+
 	if(!width) width = windowWidth();
 	if(!height) height = windowHeight();
 
@@ -198,16 +210,23 @@ void rendererUse(renderer *ren) {
 		glDisable(GL_BLEND);
 	}
 
+	glViewport(0, 0, ren->width, ren->height);
+	glScissor(0, 0, ren->width, ren->height);
+
 	glUseProgram(ren->program);
+
+	if(ren->type == rt_direct) {
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		return;
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, ren->fbo);
 	glDrawBuffers(ren->numDrawBuffers, ren->drawBuffers);
-
-	glViewport(0, 0, ren->width, ren->height);
-	glScissor(0, 0, ren->width, ren->height);
 }
 
 void rendererComplete(renderer *ren) {
+	if(ren->type == rt_direct) return;
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	for(int i = 0; i < ren->numOutputs; i++) {

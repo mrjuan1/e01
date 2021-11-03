@@ -7,7 +7,8 @@
 
 typedef enum { //
 	rt_normal,
-	rt_postprocess
+	rt_postprocess,
+	rt_direct
 } rendererType;
 
 typedef struct {

@@ -19,19 +19,21 @@ typedef enum { //
 bool configInit();
 void configFree();
 
-unsigned char configGetSamples();
 bool configGetVsync();
 configWindowMode configGetWindowMode();
 unsigned short configGetWidth();
 unsigned short configGetHeight();
 const char *configGetTitle();
 configCursorMode configGetCursorMode();
+unsigned char configGetSamples();
+unsigned char configGetAnisotropy();
 
-void configSetSamples(unsigned char samples);
 void configSetVsync(bool vsync);
 void configSetWindowMode(configWindowMode windowMode);
 void configSetWidth(unsigned short width);
 void configSetHeight(unsigned short height);
+void configSetSamples(unsigned char samples);
+void configSetAnisotropy(unsigned char anisotropy);
 
 bool configSave();
 

@@ -27,7 +27,7 @@ bool e01Init() {
 	base = rendererInit("base", rt_normal, 0, 0, 0);
 	if(!base) return false;
 
-	basic = rendererInit("basic", rt_postprocess, 0, 0, 2);
+	basic = rendererInit("basic", rt_direct, 0, 0, 2);
 	if(!basic) return false;
 
 	quad = modelInit("quad.bin");
@@ -52,7 +52,6 @@ bool e01Init() {
 	glUniform1i(3, 0);
 
 	rendererUse(basic);
-
 	glUniform2f(0, (float)windowWidth(), (float)windowHeight());
 	glUniform1i(1, configGetSamples());
 	glUniform1i(2, 0);
@@ -81,6 +80,7 @@ void e01Resize() {
 }
 
 void e01Run() {
+	// Base pass
 	rendererUse(base);
 
 	const float speed = 25.0f * windowDeltaTime();
@@ -97,8 +97,8 @@ void e01Run() {
 
 	rendererComplete(base);
 
+	// Basic pass
 	rendererUse(basic);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	if(resized) {
 		glUniform2f(0, (float)windowWidth(), (float)windowHeight());
