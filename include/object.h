@@ -13,6 +13,9 @@ typedef struct {
 
 	vec3 position, orientation, scale;
 	mat4 matrix;
+
+	float radius;
+	vec3 smallest, largest;
 } object;
 
 object *objectInit(vec3 position);

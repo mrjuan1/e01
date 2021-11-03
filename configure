@@ -75,12 +75,10 @@ case "$platform" in
 		cd vendor/bulletcapi/capi
 
 		sed -i 's|btMiniSDF.cpp$|btMiniSDF.cpp \\\n\t\t$(BULL)BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp|' bullet.mk
-
 		sed -i 's|\-\-fast\-math$|-m64 -ftree-vectorize -ffast-math -funroll-loops -fPIC|;s|^all: test$|all: libcapi.so|' Makefile
 		echo -e "capi.o: capi.cpp\n\tg++ \$< -o \$@ \$(FLAGS)\n\nlibcapi.so: capi.o lib/libbullet.a\n\tg++ \$^ -o \$@ -shared\n\tstrip -s \$@" >>Makefile
 
 		make -j$(nproc)
-
 		mv -v libcapi.so ../../..
 
 		make cleanall
@@ -97,7 +95,7 @@ case "$platform" in
 		./configure
 	fi
 	make
-	for file in indexed-*.bin; do
+	for file in {indexed,dimensions}-*.bin; do
 		cp -v $file ../../$(echo $file | sed 's|^indexed\-||')
 	done
 
@@ -109,8 +107,8 @@ case "$platform" in
 	fi
 	make
 	cp -v *.bin ../..
-
 	cd ../..
+
 	echo "O := $name" >Makefile
 	echo "include $platform.mk" >>Makefile
 	;;

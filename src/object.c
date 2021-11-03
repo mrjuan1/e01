@@ -2,8 +2,15 @@
 
 #include <string.h>
 
+#include "file.h"
 #include "mem.h"
 #include "texture.h"
+
+#define objectInitWithNameFail() \
+	{                            \
+		objectFree(obj);         \
+		return NULL;             \
+	}
 
 object *objectInit(vec3 position) {
 	object *obj = memAlloc("object initialisation", sizeof(object));
@@ -24,20 +31,16 @@ object *objectInitWithName(const char *name, vec3 position) {
 
 	const char *extension = ".bin";
 
+	// Model
 	char *filename =
 		memString("object model filename", "%s%s", name, extension, NULL);
-	if(!filename) {
-		objectFree(obj);
-		return NULL;
-	}
+	if(!filename) objectInitWithNameFail();
 
 	obj->mod = modelInit(filename);
 	free(filename);
-	if(!obj->mod) {
-		objectFree(obj);
-		return NULL;
-	}
+	if(!obj->mod) objectInitWithNameFail();
 
+	// Textures
 	obj->textureCount = 1;
 	obj->textures =
 		memAlloc("object texture list", obj->textureCount * sizeof(GLuint));
@@ -45,17 +48,39 @@ object *objectInitWithName(const char *name, vec3 position) {
 
 	filename = memString("object albedo texture filename", "%s-albedo%s", name,
 						 extension, NULL);
-	if(!filename) {
-		objectFree(obj);
-		return NULL;
-	}
+	if(!filename) objectInitWithNameFail();
 
 	bool result = textureInit(&obj->textures[0], filename);
 	free(filename);
+	if(!result) objectInitWithNameFail();
+
+	filename = memString("object model dimensions filename", "dimensions-%s%s",
+						 name, extension, NULL);
+	if(!filename) objectInitWithNameFail();
+
+	// Dimensions
+	file *f = fileInit(filename, fm_read);
+	free(filename);
+	if(!f) objectInitWithNameFail();
+
+	result = fileRead(f, "model object dimensions radius", &obj->radius,
+					  sizeof(float));
 	if(!result) {
-		objectFree(obj);
-		return NULL;
+		fileFree(f);
+		objectInitWithNameFail();
 	}
+
+	result = fileRead(f, "model object dimensions smallest point",
+					  obj->smallest, sizeof(vec3));
+	if(!result) {
+		fileFree(f);
+		objectInitWithNameFail();
+	}
+
+	result = fileRead(f, "model object dimensions largest point", obj->largest,
+					  sizeof(vec3));
+	fileFree(f);
+	if(!result) objectInitWithNameFail();
 
 	return obj;
 }
@@ -86,8 +111,6 @@ void objectUpdate(object *obj) {
 }
 
 void objectDraw(object *obj) {
-	// glUniformMatrix4fv(0, 1, GL_FALSE, obj->matrix[0]);
-
 	if(obj->textures)
 		for(int i = 0; i < obj->textureCount; i++) {
 			glActiveTexture(GL_TEXTURE0 + i);
