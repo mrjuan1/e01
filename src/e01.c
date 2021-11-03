@@ -36,7 +36,7 @@ bool e01Init() {
 	camera = modelInit("camera.bin");
 	if(!camera) return false;
 
-	if(!textureInit(&texture, "texture.bin")) return false;
+	if(!textureInit(&texture, "albedo.bin")) return false;
 
 	const float shade = 0.1f;
 	glClearColor(shade, shade, shade, 1.0f);

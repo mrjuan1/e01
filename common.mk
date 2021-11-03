@@ -2,6 +2,7 @@ SRCS := $(shell find src|grep '\.c$$')
 OBJS := $(SRCS:src/%.c=obj/%.o)
 
 SHADERS := base.bin basic.bin
+ASSETS := quad.bin camera.bin albedo.bin
 
 CC := $(CROSS_COMPILE)gcc
 STRIP := $(CROSS_COMPILE)strip
@@ -26,6 +27,8 @@ clean:
 	@rm -Rfv $(O) obj
 
 distclean: clean
+	@make -C tools/model distclean
+	@make -C tools/texture distclean
 	@rm -Rfv $(shell cat .gitignore)
 
 $(O): $(OBJS)
@@ -47,7 +50,7 @@ release: $(SRCS)
 
 dist: release
 	@mkdir -pv dist
-	@cp -Rv $(O) shaders dist
+	@cp -Rv $(O) shaders $(ASSETS) dist
 
 %.bin: shaders/%.vert shaders/%.frag
 	@rm -fv $@

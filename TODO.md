@@ -5,7 +5,7 @@
 - [x] Add texture filtering options to config? (specifically anisotropic filtering)
 - [x] Add direct rendering support for renderers
 - [x] Add tools as submodules
-- [ ] Add asset generation on configure
+- [x] Add asset generation on configure
 - [ ] Add initial object support
 - [ ] Add initial physics integration
 - [ ] Add initial audio and input support (with config entries, maybe separate for input)

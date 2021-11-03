@@ -67,6 +67,32 @@ fi
 case "$platform" in
 "linux")
 	echo "Configuring for platform \"$platform\"..."
+
+	git submodule init
+	git submodule update
+
+	cp -v ../*.{blend,png} tools
+
+	cd tools/model
+	if [ ! -e Makefile ]; then
+		./configure
+	fi
+	make
+	for file in indexed-*.bin; do
+		cp -v $file ../../$(echo $file|sed 's|^indexed\-||')
+	done
+
+	cd ../texture
+	git submodule init
+	git submodule update
+		if [ ! -e Makefile ]; then
+		./configure
+	fi
+	make
+	cp -v *.bin ../..
+
+	cd ../..
+
 	echo "O := $name" >Makefile
 	echo "include $platform.mk" >>Makefile
 	;;
