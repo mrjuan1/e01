@@ -4,7 +4,7 @@
 - [x] Add texture loading support
 - [x] Add texture filtering options to config? (specifically anisotropic filtering)
 - [x] Add direct rendering support for renderers
-- [-] Add tools as submodules
+- [x] Add tools as submodules
 - [ ] Add asset generation on configure
 - [ ] Add initial object support
 - [ ] Add initial physics integration
