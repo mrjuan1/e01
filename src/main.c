@@ -1,6 +1,8 @@
+#include <signal.h>
+
 #include "config.h"
 #include "e01.h"
-// #include "log.h"
+#include "log.h"
 #include "renderer.h"
 #include "texture.h"
 #include "window.h"
@@ -11,8 +13,12 @@
 		goto end;     \
 	}
 
+void signalHandler(int signal);
+
 int main() {
 	int exitCode = 0;
+
+	signal(SIGINT, signalHandler);
 
 	if(!configInit() || !windowInit()) fail();
 
@@ -42,4 +48,11 @@ end:
 	configFree();
 
 	return exitCode;
+}
+
+void signalHandler(int signal) {
+	if(signal == SIGINT) {
+		debug("Interrupt signal received.\n", 0);
+		windowQuit();
+	}
 }
