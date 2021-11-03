@@ -1,6 +1,7 @@
 [submodule "tools/model"]
 	path = tools/model
 	url = https://github.com/mrjuan1/model
+	branch = dimensions
 [submodule "tools/texture"]
 	path = tools/texture
 	url = https://github.com/mrjuan1/texture
