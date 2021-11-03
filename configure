@@ -71,20 +71,28 @@ case "$platform" in
 	git submodule init
 	git submodule update
 
-	cd vendor/bulletcapi/capi
-	sed -i 's|btMiniSDF.cpp$|btMiniSDF.cpp \\\n\t\t$(BULL)BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp|' bullet.mk
-	sed -i 's|\-\-fast\-math$|-m64 -ftree-vectorize -ffast-math -funroll-loops -fPIC|;s|^all: test$|all: libcapi.so|' Makefile
-	echo -e "capi.o: capi.cpp\n\tg++ \$< -o \$@ \$(FLAGS)\n\nlibcapi.so: capi.o lib/libbullet.a\n\tg++ \$^ -o \$@ -shared\n\tstrip -s \$@" >>Makefile
-	make -j$(nproc)
-	mv -v libcapi.so ../../..
-	make cleanall
-	rm -fv capi.o
-	git checkout .
+	if [ ! -e libcapi.so ]; then
+		cd vendor/bulletcapi/capi
 
-	cd ../../../tools
-	cp -v ../../*.{blend,png} .
+		sed -i 's|btMiniSDF.cpp$|btMiniSDF.cpp \\\n\t\t$(BULL)BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp|' bullet.mk
 
-	cd model
+		sed -i 's|\-\-fast\-math$|-m64 -ftree-vectorize -ffast-math -funroll-loops -fPIC|;s|^all: test$|all: libcapi.so|' Makefile
+		echo -e "capi.o: capi.cpp\n\tg++ \$< -o \$@ \$(FLAGS)\n\nlibcapi.so: capi.o lib/libbullet.a\n\tg++ \$^ -o \$@ -shared\n\tstrip -s \$@" >>Makefile
+
+		make -j$(nproc)
+
+		mv -v libcapi.so ../../..
+
+		make cleanall
+		rm -fv capi.o
+		git checkout .
+
+		cd ../../..
+	fi
+
+	cp -v ../*.{blend,png} tools
+
+	cd tools/model
 	if [ ! -e Makefile ]; then
 		./configure
 	fi
