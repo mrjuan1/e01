@@ -45,6 +45,8 @@ bool e01Init() {
 	camera = modelInit("camera.bin");
 	if(!camera) return false;
 
+	camera->hasTransparency = true;
+
 	rendererUse(base);
 
 	glmc_translate(view, (vec3) { 0.0f, 0.0f, -5.0f });
@@ -130,12 +132,7 @@ void e01Run() {
 	glUniformMatrix4fv(0, 1, GL_FALSE, matrix[0]);
 
 	rendererClear();
-
 	glBindTexture(GL_TEXTURE_2D, texture);
-
-	glCullFace(GL_FRONT);
-	modelDraw(camera);
-	glCullFace(GL_BACK);
 	modelDraw(camera);
 
 	rendererComplete(base);

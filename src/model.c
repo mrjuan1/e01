@@ -104,5 +104,12 @@ void modelFree(model *mod) {
 
 void modelDraw(const model *mod) {
 	glBindVertexArray(mod->vao);
+
+	if(mod->hasTransparency) {
+		glCullFace(GL_FRONT);
+		glDrawElements(GL_TRIANGLES, mod->count, GL_UNSIGNED_INT, NULL);
+		glCullFace(GL_BACK);
+	}
+
 	glDrawElements(GL_TRIANGLES, mod->count, GL_UNSIGNED_INT, NULL);
 }

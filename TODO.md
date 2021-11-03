@@ -1,6 +1,6 @@
 # TODO
 
-- [ ] Add support for transparent model double-culling
+- [x] Add support for transparent model double-culling
 - [ ] Add texture loading support
 - [ ] Add texture filtering options to config? (specifically anisotropic filtering)
 - [ ] Add initial object support
