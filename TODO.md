@@ -1,8 +1,9 @@
 # TODO
 
 - [x] Add support for transparent model double-culling
-- [ ] Add texture loading support
+- [x] Add texture loading support
 - [ ] Add texture filtering options to config? (specifically anisotropic filtering)
+- [ ] Add direct rendering support for renderers
 - [ ] Add initial object support
 - [ ] Add initial physics integration
 - [ ] Add tools as submodules

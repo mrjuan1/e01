@@ -32,8 +32,8 @@ bool rendererLoadProgram(renderer *ren);
 bool rendererSaveProgram(renderer *ren);
 
 void rendererSystemInit() {
-	debug("GL info:\n  Vendor: %s\n  Version: %s\n", glGetString(GL_VENDOR),
-		  glGetString(GL_VERSION));
+	// debug("GL info:\n  Vendor: %s\n  Version: %s\n", glGetString(GL_VENDOR),
+	// 	  glGetString(GL_VERSION));
 
 	const int width = windowWidth(), height = windowHeight();
 	glViewport(0, 0, width, height);
@@ -131,7 +131,8 @@ void rendererResize(renderer *ren, int width, int height) {
 	if(!width) width = windowWidth();
 	if(!height) height = windowHeight();
 
-	debug("Resizing renderer \"%s\" to %ix%i...\n", ren->name, width, height);
+	// debug("Resizing renderer \"%s\" to %ix%i...\n", ren->name, width,
+	// height);
 
 	ren->width = width;
 	ren->height = height;
@@ -270,7 +271,7 @@ GLuint rendererLoadShader(const char *name, GLenum type) {
 }
 
 bool rendererCreateProgram(renderer *ren) {
-	debug("Creating program for renderer \"%s\"...\n", ren->name);
+	// debug("Creating program for renderer \"%s\"...\n", ren->name);
 
 	ren->program = glCreateProgram();
 
@@ -322,7 +323,8 @@ bool rendererLoadProgram(renderer *ren) {
 	const char *programBinary = "program binary";
 	const char *forRenderer = "for renderer";
 
-	debug("Loading %s %s \"%s\"...\n", programBinary, forRenderer, ren->name);
+	// debug("Loading %s %s \"%s\"...\n", programBinary, forRenderer,
+	// ren->name);
 
 	char *thing = memString(thingString, "filename for %s %s \"%s\"",
 							programBinary, forRenderer, ren->name, NULL);

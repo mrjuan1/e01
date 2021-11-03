@@ -40,7 +40,7 @@ bool windowInit() {
 
 	if(!windowSetGLAttributes()) return false;
 
-	debug("Creating window...\n", 0);
+	// debug("Creating window...\n", 0);
 	const configWindowMode windowMode = configGetWindowMode();
 	const int position = windowMode == cwm_normal	 ? SDL_WINDOWPOS_CENTERED :
 						 windowMode == cwm_resizable ? SDL_WINDOWPOS_UNDEFINED :
@@ -73,7 +73,7 @@ bool windowInit() {
 		if(cursorMode == ccm_captured) SDL_SetRelativeMouseMode(SDL_TRUE);
 	}
 
-	debug("Creating context...\n", 0);
+	// debug("Creating context...\n", 0);
 	windowData.context = SDL_GL_CreateContext(windowData.window);
 	if(!windowData.context) windowInitFail("create context");
 
@@ -186,7 +186,7 @@ float windowDeltaTime() { return windowData.deltaTime; }
 void windowQuit() { windowData.running = false; }
 
 bool windowSetGLAttributes() {
-	debug("Setting GL attributes...\n", 0);
+	// debug("Setting GL attributes...\n", 0);
 
 	const char *thingString = "set GL attribute";
 
@@ -235,5 +235,5 @@ void windowResize() {
 						   &windowData.height);
 	windowData.resized = true;
 
-	debug("Size: %ix%i\n", windowData.width, windowData.height);
+	// debug("Size: %ix%i\n", windowData.width, windowData.height);
 }
