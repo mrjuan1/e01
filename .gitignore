@@ -1,5 +1,6 @@
 Makefile
 obj/
+lib*.so
 e01
 
 tools/*.blend

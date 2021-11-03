@@ -20,6 +20,8 @@ CFLAGS_RELEASE += -Ofast
 CFLAGS_RELEASE += -ftree-vectorize -ffast-math -funroll-loops
 
 LDFLAGS_COMMON := -lSDL2 -lGLESv2 -lcglm
+LDFLAGS_COMMON += -L. -Wl,-rpath,.
+LDFLAGS_COMMON += -lcapi
 
 all: $(O) $(SHADERS) $(ASSETS)
 
@@ -27,6 +29,8 @@ clean:
 	@rm -Rfv $(O) obj
 
 distclean: clean
+	@make -C vendor/bulletcapi/capi cleanall
+	@rm -fv vendor/bulletcapi/capi/{libcapi.so,capi.o}
 	@make -C tools/model distclean
 	@make -C tools/texture distclean
 	@rm -Rfv $(shell cat .gitignore)
@@ -50,7 +54,7 @@ release: $(SRCS)
 
 dist: release
 	@mkdir -pv dist
-	@cp -Rv $(O) shaders $(ASSETS) dist
+	@cp -Rv $(O) lib*.so shaders $(ASSETS) dist
 
 %.bin: shaders/%.vert shaders/%.frag
 	@rm -fv $@

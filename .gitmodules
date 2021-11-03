@@ -1,3 +1,9 @@
+[submodule "vendor/bullet3"]
+	path = vendor/bullet3
+	url = https://github.com/bulletphysics/bullet3
+[submodule "vendor/bulletcapi"]
+	path = vendor/bulletcapi
+	url = https://github.com/chriscamacho/bulletcapi
 [submodule "tools/model"]
 	path = tools/model
 	url = https://github.com/mrjuan1/model

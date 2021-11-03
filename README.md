@@ -16,7 +16,9 @@ A small WIP game engine for personal projects.
 
 For building, a C compiler and compatible C library of your choice can be used. This project was developed using GCC and GLIBC.
 
-Additional libraries required are SDL2, OpenGL ES 3.1 and cglm. Tools required to prepare assets are the model and texture tool, which are provided as submodules and will be built during the [configuration](#configuration) process. More dependencies will be added later.
+Libraries required are SDL2, OpenGL ES 3.1 and cglm. Additional libraries like Bullet 3 and bulletCapi are required too, but these are provided as vendor submodules and will be built during the [configuration](#configuration) process.
+
+Tools required to prepare assets are the model and texture tool, which are provided as submodules and will be built during the [configuration](#configuration) process too. More dependencies will be added later.
 
 To run or debug this engine, a valid Blender model (see the model tool's README.md) and a valid PNG, JPG or BMP texture (see the texture tool's README.md) will be required in the project's parent directory. Once placed there, see each tool's README.md on how to prepare these assets.
 
