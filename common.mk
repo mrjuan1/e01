@@ -8,7 +8,8 @@ CC := $(CROSS_COMPILE)gcc
 STRIP := $(CROSS_COMPILE)strip
 GDB := $(CROSS_COMPILE)gdb
 
-CFLAGS_COMMON := -Iinclude -std=c2x -m64
+CFLAGS_COMMON := -Ivendor/bulletcapi/capi
+CFLAGS_COMMON += -Iinclude -std=c2x -m64
 CFLAGS_COMMON += -DLOG_USE_SDL
 
 CFLAGS_DEBUG := $(CFLAGS_COMMON)
