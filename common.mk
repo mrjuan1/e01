@@ -2,7 +2,7 @@ SRCS := $(shell find src|grep '\.c$$')
 OBJS := $(SRCS:src/%.c=obj/%.o)
 
 SHADERS := base.bin basic.bin
-ASSETS := quad.bin camera.bin albedo.bin
+ASSETS := quad.bin camera.bin camera-albedo.bin
 
 CC := $(CROSS_COMPILE)gcc
 STRIP := $(CROSS_COMPILE)strip
@@ -21,7 +21,7 @@ CFLAGS_RELEASE += -ftree-vectorize -ffast-math -funroll-loops
 
 LDFLAGS_COMMON := -lSDL2 -lGLESv2 -lcglm
 
-all: $(O) $(SHADERS)
+all: $(O) $(SHADERS) $(ASSETS)
 
 clean:
 	@rm -Rfv $(O) obj
@@ -55,6 +55,9 @@ dist: release
 %.bin: shaders/%.vert shaders/%.frag
 	@rm -fv $@
 
+camera-albedo.bin: albedo.bin
+	@cp -v $< $@
+
 help:
 	@echo "all - Build executable"
 	@echo "clean - Remove executable and obj directory"
@@ -66,3 +69,4 @@ help:
 	@echo "release - Build optimised executable"
 	@echo "dist - Package optimised executable and all local dependencies in a dist directory"
 	@echo "<shader>.bin - Remove a shader program binary for re-creating if the source shader files have changed"
+	@echo "camera-albedo.bin - Copy albedo.bin to camera-albedo.bin"

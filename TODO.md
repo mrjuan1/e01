@@ -6,7 +6,7 @@
 - [x] Add direct rendering support for renderers
 - [x] Add tools as submodules
 - [x] Add asset generation on configure
-- [ ] Add initial object support
+- [x] Add initial object support
 - [ ] Add initial physics integration
 - [ ] Add initial audio and input support (with config entries, maybe separate for input)
 

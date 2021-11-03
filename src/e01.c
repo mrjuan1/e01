@@ -4,8 +4,8 @@
 
 #include "config.h"
 #include "model.h"
+#include "object.h"
 #include "renderer.h"
-#include "texture.h"
 #include "window.h"
 
 renderer *base = NULL;
@@ -15,11 +15,10 @@ mat4 projection = GLM_MAT4_IDENTITY_INIT;
 mat4 view = GLM_MAT4_IDENTITY_INIT;
 mat4 projectionView = GLM_MAT4_IDENTITY_INIT;
 
-model *quad = NULL, *camera = NULL;
-GLuint texture = 0;
+object *camera = NULL;
+model *quad = NULL;
 
 bool resized = false;
-float angle = 0.0f;
 
 void updateProjectionView();
 
@@ -33,18 +32,14 @@ bool e01Init() {
 	quad = modelInit("quad.bin");
 	if(!quad) return false;
 
-	camera = modelInit("camera.bin");
+	camera = objectInitWithName("camera", GLM_VEC3_ZERO);
 	if(!camera) return false;
-
-	if(!textureInit(&texture, "albedo.bin")) return false;
 
 	const float shade = 0.1f;
 	glClearColor(shade, shade, shade, 1.0f);
 
 	glmc_translate(view, (vec3) { 0.0f, 0.0f, -5.0f });
 	updateProjectionView();
-
-	camera->hasTransparency = true;
 
 	rendererUse(base);
 	glUniform4fv(1, 1, GLM_VEC4_ONE);
@@ -57,13 +52,13 @@ bool e01Init() {
 	glUniform1i(2, 0);
 	glUniform1i(3, 1);
 
+	camera->mod->hasTransparency = true;
+
 	return true;
 }
 
 void e01Free() {
-	glDeleteTextures(1, &texture);
-
-	modelFree(camera);
+	objectFree(camera);
 	modelFree(quad);
 
 	rendererFree(basic);
@@ -84,16 +79,16 @@ void e01Run() {
 	rendererUse(base);
 
 	const float speed = 25.0f * windowDeltaTime();
-	angle += speed;
-	if(angle > 360.0f) angle -= 360.0f;
+	camera->orientation[1] += speed;
+	if(camera->orientation[1] > 360.0f) camera->orientation[1] -= 360.0f;
+	objectUpdate(camera);
 
 	mat4 matrix;
-	glmc_rotate_y(projectionView, glm_rad(-angle), matrix);
+	glmc_mul(projectionView, camera->matrix, matrix);
 	glUniformMatrix4fv(0, 1, GL_FALSE, matrix[0]);
 
 	rendererClear();
-	glBindTexture(GL_TEXTURE_2D, texture);
-	modelDraw(camera);
+	objectDraw(camera);
 
 	rendererComplete(base);
 
