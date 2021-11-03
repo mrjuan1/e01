@@ -2,6 +2,8 @@ Makefile
 obj/
 e01
 
+tools/*.blend
+tools/*.png
 *.bin
 
 dist/

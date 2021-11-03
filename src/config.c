@@ -9,7 +9,6 @@
 
 #define CONFIG_FILENAME "config.bin"
 
-#define CONFIG_DEFAULT_SAMPLES 8
 #define CONFIG_DEFAULT_VSYNC true
 
 #ifdef DEBUG
@@ -30,6 +29,9 @@
 #define CONFIG_DEFAULT_CURSOR_MODE ccm_hidden
 #endif // DEBUG
 
+#define CONFIG_DEFAULT_SAMPLES 8
+#define CONFIG_DEFAULT_ANISOTROPY 16
+
 #define configSaveDefaults()                                              \
 	{                                                                     \
 		info("Config could not be loaded, attempting to create...\n", 0); \
@@ -47,7 +49,6 @@
 	}
 
 struct {
-	unsigned char samples;
 	bool vsync;
 
 	configWindowMode windowMode;
@@ -55,6 +56,8 @@ struct {
 	char *title;
 
 	configCursorMode cursorMode;
+
+	unsigned char samples, anisotropy;
 } configData;
 
 bool configSetDefaults();
@@ -66,9 +69,6 @@ bool configInit() {
 	if(!f) configSaveDefaults();
 
 	memset(&configData, 0, sizeof(configData));
-
-	if(!fileRead(f, "samples", &configData.samples, sizeof(unsigned char)))
-		configInitFail();
 
 	if(!fileRead(f, "vsync", &configData.vsync, sizeof(bool))) configInitFail();
 
@@ -93,6 +93,13 @@ bool configInit() {
 				 sizeof(configCursorMode)))
 		configInitFail();
 
+	if(!fileRead(f, "samples", &configData.samples, sizeof(unsigned char)))
+		configInitFail();
+
+	if(!fileRead(f, "anisotropy", &configData.anisotropy,
+				 sizeof(unsigned char)))
+		configInitFail();
+
 	fileFree(f);
 
 	return true;
@@ -104,8 +111,6 @@ void configFree() {
 }
 
 // Gets
-unsigned char configGetSamples() { return configData.samples; }
-
 bool configGetVsync() { return configData.vsync; }
 
 configWindowMode configGetWindowMode() { return configData.windowMode; }
@@ -118,9 +123,11 @@ const char *configGetTitle() { return configData.title; }
 
 configCursorMode configGetCursorMode() { return configData.cursorMode; }
 
-// Sets
-void configSetSamples(unsigned char samples) { configData.samples = samples; }
+unsigned char configGetSamples() { return configData.samples; }
 
+unsigned char configGetAnisotropy() { return configData.anisotropy; }
+
+// Sets
 void configSetVsync(bool vsync) { configData.vsync = vsync; }
 
 void configSetWindowMode(configWindowMode windowMode) {
@@ -131,15 +138,18 @@ void configSetWidth(unsigned short width) { configData.width = width; }
 
 void configSetHeight(unsigned short height) { configData.height = height; }
 
+void configSetSamples(unsigned char samples) { configData.samples = samples; }
+
+void configSetAnisotropy(unsigned char anisotropy) {
+	configData.anisotropy = anisotropy;
+}
+
 // Save
 bool configSave() {
 	debug("Saving config \"%s\"...\n", CONFIG_FILENAME);
 
 	file *f = fileInit(CONFIG_FILENAME, fm_write);
 	if(!f) return false;
-
-	if(!fileWrite(f, "samples", &configData.samples, sizeof(unsigned char)))
-		configSaveFail();
 
 	if(!fileWrite(f, "vsync", &configData.vsync, sizeof(bool)))
 		configSaveFail();
@@ -164,6 +174,13 @@ bool configSave() {
 				  sizeof(configCursorMode)))
 		configSaveFail();
 
+	if(!fileWrite(f, "samples", &configData.samples, sizeof(unsigned char)))
+		configSaveFail();
+
+	if(!fileWrite(f, "anisotropy", &configData.anisotropy,
+				  sizeof(unsigned char)))
+		configSaveFail();
+
 	fileFree(f);
 
 	info("Config saved.\n", 0);
@@ -176,7 +193,6 @@ bool configSetDefaults() {
 
 	memset(&configData, 0, sizeof(configData));
 
-	configData.samples = CONFIG_DEFAULT_SAMPLES;
 	configData.vsync = CONFIG_DEFAULT_VSYNC;
 
 	configData.windowMode = CONFIG_DEFAULT_WINDOW_MODE;
@@ -188,6 +204,9 @@ bool configSetDefaults() {
 	if(!configData.title) return false;
 
 	configData.cursorMode = CONFIG_DEFAULT_CURSOR_MODE;
+
+	configData.samples = CONFIG_DEFAULT_SAMPLES;
+	configData.anisotropy = CONFIG_DEFAULT_ANISOTROPY;
 
 	return true;
 }

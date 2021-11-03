@@ -64,6 +64,10 @@ void fileFree(file *f) {
 	}
 }
 
+void fileSeek(file *f, int offset) {
+	SDL_RWseek((SDL_RWops *)f->ptr, offset, RW_SEEK_SET);
+}
+
 bool fileRead(file *f, const char *thing, void *data, int size) {
 	int result = SDL_RWread((SDL_RWops *)f->ptr, data, size, 1);
 	if(result != 1) {

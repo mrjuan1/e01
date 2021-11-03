@@ -1,0 +1,6 @@
+[submodule "tools/model"]
+	path = tools/model
+	url = https://github.com/mrjuan1/model
+[submodule "tools/texture"]
+	path = tools/texture
+	url = https://github.com/mrjuan1/texture

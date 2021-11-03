@@ -10,14 +10,14 @@ layout(location = 1) uniform int samples;
 layout(location = 2) uniform sampler2DMS colourSampler;
 layout(location = 3) uniform sampler2DMS depthSampler;
 
-in vec2 texCoords;
+in vec2 vTexCoords;
 
 layout(location = 0) out vec4 outColour;
 layout(location = 1) out vec4 outDepth;
 
 void main() {
 	outColour = outDepth = vec4(0.0f);
-	ivec2 position = ivec2(texCoords * size);
+	ivec2 position = ivec2(vTexCoords * size);
 
 	for(int i = 0; i < samples; i++) {
 		outColour += texelFetch(colourSampler, position, i);
