@@ -7,9 +7,10 @@
 - [x] Add tools as submodules
 - [x] Add asset generation on configure
 - [x] Add initial object support
-- [ ] Add initial physics integration
+- [-] Add initial physics integration
 - [ ] Add initial audio and input support (with config entries, maybe separate for input)
 
+- [ ] Add optional opacity and AO textures support
 - [ ] Add defferred lighting
 - [ ] Add filtered shadow mapping
 - [ ] Add ambient occlusion
